@@ -87,35 +87,10 @@ class BaseResponse:
         return BaseResponse.send_response(False, return_code, return_message, data_response, status.HTTP_200_OK)
 
 
-##### Response helper class #####
+##### Sanitizer class #####
 class BaseRefiner:
     @staticmethod
     def clean_data(data):
         for key in data:
             data[key] = data[key].strip()
         return data
-
-
-# @staticmethod
-# def inform_exeption(info):
-#     time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-#     file_name = "logs/exception.log"
-#     msg = "\n-------------------\n"
-#     msg += "Datetime : %s \n" % time
-#
-#     for line in traceback.format_exception(info[0], info[1], info[2]):
-#         msg += line
-#         msg += "\n"
-#     msg += "-------------------\n"
-#     print msg
-#
-#     try:
-#         file = open(file_name, 'a+')
-#         file.write(msg)
-#         file.close()
-#         EmailManager.send_exception_email(info, time)
-#     except IOError as e:
-#         print "I/O error({0}): {1}".format(e.errno, e.strerror)
-#     except:
-#         print "Unexpected error:", sys.exc_info()[1]
-#         raise
