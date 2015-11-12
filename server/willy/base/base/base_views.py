@@ -14,7 +14,7 @@ from blog.models import AccountToken
 ##### Request helper class #####
 class BaseRequest(APIView):
     def post(self, request):
-        serializer = BaseSerializer(data=request.DATA)
+        serializer = BaseSerializer(data=request.data)
         return BaseRequest.generate_response(serializer)
 
     def get(self, request):
@@ -22,7 +22,7 @@ class BaseRequest(APIView):
         return BaseRequest.generate_response(serializer)
 
     def put(self, request):
-        serializer = BaseSerializer(data=request.DATA)
+        serializer = BaseSerializer(data=request.data)
         return BaseRequest.generate_response(serializer)
 
     def delete(self, request):
@@ -36,7 +36,7 @@ class BaseRequest(APIView):
         data = serializer.data
         token_all = AccountToken.objects.filter(valid_flg=True)
         for token in token_all:
-            if token.token == data['token'] and token.type == AccountToken.ACCESS:
+            if token.token == data['token'] and token.type == AccountToken.ACCESS_TOKEN:
                 timestamp = calendar.timegm(token.expired_date.timetuple())
                 timestamp_now = calendar.timegm(datetime.datetime.now().timetuple())
                 if timestamp_now > timestamp:   # expired token

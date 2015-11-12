@@ -21,7 +21,7 @@ class AccountRegView(APIView):
         self.data_response = {}
 
     def post(self, request):
-        serializer = AccountRegSerializer(data=request.DATA)
+        serializer = AccountRegSerializer(data=request.data)
         if not serializer.is_valid():
             return BaseResponse.send_response(False, error_code.MISSING_REQUIRED_FIELD,
                                               error_message.MISSING_REQUIRED_FIELD, self.data_response,
@@ -51,14 +51,15 @@ class AccountRegView(APIView):
         account.verified_flg = False
         account.active_flg = 0
         account.save()
-        token_verify = TokenManager.generate_token(account, AccountToken.VERIFY)
+        token_verify = TokenManager.generate_token(account, AccountToken.VERIFY_TOKEN)
         # TODO: implement send verification mail
         print token_verify
         # end TODO
         self.data_response = {
             'id': account.id,
             'email': account.email,
-            'name': account.first_name + ' ' + account.last_name
+            'first_name': account.first_name,
+            'last_name': account.last_name
         }
         return BaseResponse.send_response(True, error_code.SUCCESSFUL, error_message.SUCCESSFUL, self.data_response,
                                           status.HTTP_200_OK)
@@ -83,13 +84,13 @@ class AccountVerifyView(APIView):
         self.data_response = {}
 
     def post(self, request):
-        serializer = AccountVerifySerializer(data=request.DATA)
+        serializer = AccountVerifySerializer(data=request.data)
         if not serializer.is_valid():
             return BaseResponse.send_response(False, error_code.MISSING_REQUIRED_FIELD,
                                               error_message.MISSING_REQUIRED_FIELD, self.data_response,
                                               status.HTTP_200_OK)
         data = BaseRefiner.clean_data(serializer.data)
-        token_all = AccountToken.objects.filter(valid_flg=True, type__exact=AccountToken.VERIFY)
+        token_all = AccountToken.objects.filter(valid_flg=True, type__exact=AccountToken.VERIFY_TOKEN)
         if token_all:
             for token in token_all:
                 if token.token == data['token']:
@@ -98,12 +99,12 @@ class AccountVerifyView(APIView):
                         account.active_flg = 1
                         account.verified_flg = True
                         account.updated_date = datetime.now()
-                        access_token = TokenManager.generate_token(account, AccountToken.ACCESS)
+                        access_token = TokenManager.generate_token(account, AccountToken.ACCESS_TOKEN)
                         account.save()
                         token.delete()
                         self.data_response = AccountDetailSerializer(account).data
                         self.data_response['id'] = account.id
-                        self.data_response['token'] = access_token
+                        self.data_response['token'] = access_token.token
                         self.data_response['expired'] = access_token.expired_date
                         return BaseResponse.send_response(True, error_code.SUCCESSFUL, error_message.SUCCESSFUL,
                                                           self.data_response,

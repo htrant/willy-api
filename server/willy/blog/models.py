@@ -19,15 +19,15 @@ class Account(models.Model):
 
 
 class AccountToken(models.Model):
-    ACCESS = 'ac'
-    VERIFY = 've'
+    ACCESS_TOKEN = 'ac'
+    VERIFY_TOKEN = 've'
     TOKEN_TYPE_CHOICES = (
-        (ACCESS, 'accessed token'),
-        (VERIFY, 'verified token'),
+        (ACCESS_TOKEN, 'accessed token'),
+        (VERIFY_TOKEN, 'verified token'),
     )
     account = models.ForeignKey(Account)
     token = models.CharField(max_length=128, default="")
-    type = models.CharField(max_length=2, choices=TOKEN_TYPE_CHOICES, default=ACCESS)
+    type = models.CharField(max_length=2, choices=TOKEN_TYPE_CHOICES, default=ACCESS_TOKEN)
     created_date = models.DateTimeField(null=False, auto_now_add=True)
     expired_date = models.DateTimeField(null=False, auto_now_add=True)
     valid_flg = models.BooleanField(null=False, default=False)

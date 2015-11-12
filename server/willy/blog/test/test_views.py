@@ -21,7 +21,7 @@ class TestView(APIView):
                                               error_message.MISSING_REQUIRED_FIELD, self.data_response,
                                               status.HTTP_200_OK)
         data = BaseRefiner.clean_data(serializer.data)
-        token_all = AccountToken.objects.filter(valid_flg=True, type__exact=AccountToken.VERIFY)
+        token_all = AccountToken.objects.filter(valid_flg=True, type__exact=AccountToken.VERIFY_TOKEN)
         return BaseResponse.send_response(False, error_code.TOKEN_EMPTY_OR_INVALID,
                                               error_message.TOKEN_EMPTY_OR_INVALID, self.data_response,
                                               status.HTTP_200_OK)
